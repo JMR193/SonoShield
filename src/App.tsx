@@ -20,8 +20,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import WaveSurfer from 'wavesurfer.js';
 import confetti from 'canvas-confetti';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { collection, addDoc, query, where, orderBy, limit, onSnapshot, Timestamp, doc, getDocFromServer } from 'firebase/firestore';
-import { auth, db, loginWithGoogle, logout, handleFirestoreError, OperationType, firebaseConfig } from '@/src/lib/firebase';
+import { auth, loginWithGoogle, logout } from '@/src/lib/firebase';
 import { cn, generateFingerprint, humanizeAudio, analyzeAIDetection, audioBufferToBlob } from '@/src/lib/audio-utils';
 
 export default function App() {
@@ -54,23 +53,6 @@ export default function App() {
   const wavesurfer = useRef<WaveSurfer | null>(null);
 
   useEffect(() => {
-    // 🔍 Test Connection to Firestore
-    const testConnection = async () => {
-      try {
-        if (firebaseConfig.firestoreDatabaseId) {
-          console.log("Checking Firestore connection for DB:", firebaseConfig.firestoreDatabaseId);
-        }
-        await getDocFromServer(doc(db, '_internal', 'connection_test'));
-      } catch (error: any) {
-        if (error?.message?.includes('the client is offline') || error?.code === 'unavailable') {
-          console.warn("Firestore is currently unreachable. The app will work in offline mode and sync when back online.");
-        } else {
-          console.error("Firestore connectivity issue:", error);
-        }
-      }
-    };
-    testConnection();
-
     const unsubscribeAuth = onAuthStateChanged(auth, (u) => {
       setUser(u);
     });
@@ -106,35 +88,8 @@ export default function App() {
       return;
     }
 
-    const path = `users/${user.uid}/tracks`;
-    const q = query(
-      collection(db, path),
-      where('userId', '==', user.uid),
-      orderBy('timestamp', 'desc'),
-      limit(5)
-    );
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const entries = snapshot.docs.map(doc => {
-        const data = doc.data();
-        const date = data.timestamp instanceof Timestamp 
-          ? data.timestamp.toDate().toLocaleString() 
-          : new Date(data.timestamp).toLocaleString();
-        return {
-          name: data.name,
-          title: data.title || 'Untitled',
-          artist: data.artist || 'Independent',
-          genre: data.genre || 'Various',
-          fingerprint: data.fingerprint,
-          date
-        };
-      });
-      setLedger(entries);
-    }, (error) => {
-      handleFirestoreError(error, OperationType.LIST, path);
-    });
-
-    return () => unsubscribe();
+    // Ledger functionality has been disabled since Firestore was removed
+    setLedger([]);
   }, [user]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -188,31 +143,16 @@ export default function App() {
         status: newScore > 70 ? 'CRITICAL' : newScore > 40 ? 'SUSPICIOUS' : 'SAFE'
       });
 
-      // 4. Update Ledger (Firestore)
-      if (user) {
-        const path = `users/${user.uid}/tracks`;
-        try {
-          await addDoc(collection(db, path), {
-            name: file?.name || 'Unknown Track',
-            title: metadata.title || file?.name?.replace(/\.[^/.]+$/, "") || 'Untitled',
-            artist: metadata.artist || 'Independent Artist',
-            genre: metadata.genre,
-            fingerprint: fp,
-            timestamp: Timestamp.now(),
-            userId: user.uid
-          });
-        } catch (error) {
-          handleFirestoreError(error, OperationType.CREATE, path);
-        }
-      } else {
-        // Fallback to local state if not logged in (wipes on refresh)
-        const newEntry = {
-          name: file?.name || 'Unknown Track',
-          fingerprint: fp,
-          date: new Date().toLocaleString()
-        };
-        setLedger(prev => [newEntry, ...prev].slice(0, 5));
-      }
+      // 4. Update Ledger locally
+      const newEntry = {
+        name: file?.name || 'Unknown Track',
+        title: metadata.title || file?.name?.replace(/\.[^/.]+$/, "") || 'Untitled',
+        artist: metadata.artist || 'Independent Artist',
+        genre: metadata.genre,
+        fingerprint: fp,
+        date: new Date().toLocaleString()
+      };
+      setLedger(prev => [newEntry, ...prev].slice(0, 5));
       
       // Update wavesurfer visualization with processed data (preview)
       const blob = await audioBufferToBlob(result);
@@ -621,10 +561,6 @@ export default function App() {
                        <div className="flex items-center justify-between text-[8px] text-slate-400">
                           <span>Distributor Integrity</span>
                           <span className="text-green-500 font-bold">PASSED</span>
-                       </div>
-                       <div className="flex items-center justify-between text-[8px] text-slate-400">
-                          <span>Monetization Check</span>
-                          <span className="text-studio-accent font-bold">READY</span>
                        </div>
                     </div>
                   )}

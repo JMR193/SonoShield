@@ -6,7 +6,7 @@ SonoShield is a professional-grade spectral engine designed for AI-generated mus
 
 - **Spectral Humanization**: Intelligent audio processing to add natural jitter and organic textures to AI-generated stems.
 - **AI Resistance Engine**: Analyzes and obscures machine-learning patterns that trigger copyright flags.
-- **IP Fingerprinting**: Registers your audio fingerprints to a secure, immutable ledger (Firestore) for ownership verification.
+- **IP Fingerprinting**: Generates and manages your audio fingerprints to securely track ownership verification.
 - **Platform Compliance**: Ready for Spotify, Apple Music, and major distributors (DistroKid, RouteNote).
 - **Real-time Spectral Visualization**: Powered by WaveSurfer.js for precise audio analysis.
 
@@ -15,7 +15,7 @@ SonoShield is a professional-grade spectral engine designed for AI-generated mus
 - **Frontend**: React 19, Vite, Tailwind CSS 4.0
 - **Animation**: Motion (formerly Framer Motion)
 - **Audio Processing**: Web Audio API, WaveSurfer.js
-- **Backend & Auth**: Firebase (Authentication, Firestore)
+- **Backend & Auth**: Firebase (Authentication)
 - **AI Integration**: Google Gemini AI (via Secure Server Proxy)
 - **Server**: Express (Node.js) with TypeScript (tsx)
 
@@ -33,7 +33,6 @@ VITE_FIREBASE_PROJECT_ID=your_project_id
 VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket
 VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 VITE_FIREBASE_APP_ID=your_app_id
-VITE_FIRESTORE_DATABASE_ID=your_database_id
 
 # Gemini AI (Private)
 GEMINI_API_KEY=your_gemini_key
@@ -55,7 +54,6 @@ The server runs on [http://localhost:3000](http://localhost:3000).
 
 ## Security
 
-- **Firestore Rules**: Hardened security rules prevent identity spoofing and unauthorized data access.
 - **Secure AI Proxy**: Gemini API keys are handled server-side to prevent exposure in the client browser.
 - **Fingerprint Integrity**: Cryptographic fingerprints ensure that metadata cannot be tampered with after registration.
 

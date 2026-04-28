@@ -32,5 +32,10 @@ service cloud.firestore {
       // Tracks are immutable once created for IP consistency
       allow update: if false;
     }
+
+    // Connection test document
+    match /_internal/connection_test {
+      allow get: if true;
+    }
   }
 }

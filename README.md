@@ -1,20 +1,64 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# SonoShield AI Humanizer
 
-# Run and deploy your AI Studio app
+SonoShield is a professional-grade spectral engine designed for AI-generated music. It provides advanced audio humanization, IP fingerprinting, and resistance against AI detection algorithms to ensure your digital assets remain unique and compliant with distribution platforms.
 
-This contains everything you need to run your app locally.
+## Features
 
-View your app in AI Studio: https://ai.studio/apps/0bc8692f-e3bf-4190-9a7d-86778e740846
+- **Spectral Humanization**: Intelligent audio processing to add natural jitter and organic textures to AI-generated stems.
+- **AI Resistance Engine**: Analyzes and obscures machine-learning patterns that trigger copyright flags.
+- **IP Fingerprinting**: Registers your audio fingerprints to a secure, immutable ledger (Firestore) for ownership verification.
+- **Platform Compliance**: Ready for Spotify, Apple Music, and major distributors (DistroKid, RouteNote).
+- **Real-time Spectral Visualization**: Powered by WaveSurfer.js for precise audio analysis.
 
-## Run Locally
+## Tech Stack
 
-**Prerequisites:**  Node.js
+- **Frontend**: React 19, Vite, Tailwind CSS 4.0
+- **Animation**: Motion (formerly Framer Motion)
+- **Audio Processing**: Web Audio API, WaveSurfer.js
+- **Backend & Auth**: Firebase (Authentication, Firestore)
+- **AI Integration**: Google Gemini AI (via Secure Server Proxy)
+- **Server**: Express (Node.js) with TypeScript (tsx)
 
+## Getting Started
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+### Environment Variables
+
+Create a `.env` file based on `.env.example`:
+
+```env
+# Firebase Configuration
+VITE_FIREBASE_API_KEY=your_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_auth_domain
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+VITE_FIRESTORE_DATABASE_ID=your_database_id
+
+# Gemini AI (Private)
+GEMINI_API_KEY=your_gemini_key
+```
+
+### Installation
+
+```bash
+npm install
+```
+
+### Development
+
+```bash
+npm run dev
+```
+
+The server runs on [http://localhost:3000](http://localhost:3000).
+
+## Security
+
+- **Firestore Rules**: Hardened security rules prevent identity spoofing and unauthorized data access.
+- **Secure AI Proxy**: Gemini API keys are handled server-side to prevent exposure in the client browser.
+- **Fingerprint Integrity**: Cryptographic fingerprints ensure that metadata cannot be tampered with after registration.
+
+## License
+
+© 2026 SonoShield Spectral Engine. AI Resistance Verified.

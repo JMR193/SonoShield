@@ -57,7 +57,9 @@ export default function App() {
     // 🔍 Test Connection to Firestore
     const testConnection = async () => {
       try {
-        console.log("Checking Firestore connection for DB:", (firebaseConfig as any).firestoreDatabaseId);
+        if (firebaseConfig.firestoreDatabaseId) {
+          console.log("Checking Firestore connection for DB:", firebaseConfig.firestoreDatabaseId);
+        }
         await getDocFromServer(doc(db, '_internal', 'connection_test'));
       } catch (error: any) {
         if (error?.message?.includes('the client is offline') || error?.code === 'unavailable') {
@@ -265,6 +267,31 @@ export default function App() {
     const a = document.createElement('a');
     a.href = url;
     a.download = `sonoshield_${file?.name?.replace(/\.[^/.]+$/, "") || 'track'}.wav`;
+    a.click();
+  };
+
+  const downloadModelFile = () => {
+    const modelData = {
+      version: "2.5.0-stable",
+      engine: "SonoShield Spectral Heuristics",
+      thresholds: {
+        critical: 70,
+        suspicious: 40,
+        safe: 39
+      },
+      analysis_patterns: [
+        "Phase Correlation Analysis",
+        "Harmonic Transient Detection",
+        "Spectral Flatness Measurement",
+        "Macro-Dynamics Entropy"
+      ],
+      last_updated: "2026-04-28"
+    };
+    const blob = new Blob([JSON.stringify(modelData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `sonoshield_model_v2.5.0.json`;
     a.click();
   };
 
@@ -601,6 +628,14 @@ export default function App() {
                        </div>
                     </div>
                   )}
+                  
+                  <button 
+                    onClick={downloadModelFile}
+                    className="w-full mt-4 py-2 border border-white/5 bg-black/20 rounded-lg text-[9px] font-bold text-slate-400 uppercase tracking-widest hover:bg-white/5 transition-all flex items-center justify-center gap-2"
+                  >
+                    <Download className="w-3 h-3" />
+                    Download Detection Model (.JSON)
+                  </button>
                 </div>
               ) : (
                 <div className="h-24 flex items-center justify-center opacity-30 italic text-xs">

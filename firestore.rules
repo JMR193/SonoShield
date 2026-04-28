@@ -1,0 +1,36 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Validation helper
+    function isValidTrack(data) {
+      return data.keys().hasAll(['name', 'title', 'artist', 'genre', 'fingerprint', 'timestamp', 'userId']) &&
+             data.keys().size() == 7 &&
+             data.name is string && data.name.size() <= 256 &&
+             data.title is string && data.title.size() <= 256 &&
+             data.artist is string && data.artist.size() <= 256 &&
+             data.genre is string && data.genre.size() <= 64 &&
+             data.fingerprint is string && data.fingerprint.size() == 16 &&
+             data.timestamp is timestamp &&
+             data.userId is string && data.userId == request.auth.uid;
+    }
+
+    function isSignedIn() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    // User-specific tracks
+    match /users/{userId}/tracks/{trackId} {
+      allow list: if isSignedIn() && userId == request.auth.uid;
+      allow get: if isSignedIn() && userId == request.auth.uid;
+      allow create: if isSignedIn() && userId == request.auth.uid && isValidTrack(request.resource.data);
+      allow delete: if isSignedIn() && userId == request.auth.uid;
+      // Tracks are immutable once created for IP consistency
+      allow update: if false;
+    }
+  }
+}

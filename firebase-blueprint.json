@@ -1,0 +1,47 @@
+{
+  "entities": {
+    "ProtectedTrack": {
+      "title": "Protected Track",
+      "description": "Metadata for an audio track that has been humanized and fingerprinted.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The original filename of the track."
+        },
+        "title": {
+          "type": "string",
+          "description": "The track title."
+        },
+        "artist": {
+          "type": "string",
+          "description": "The artist name."
+        },
+        "genre": {
+          "type": "string",
+          "description": "The music genre."
+        },
+        "fingerprint": {
+          "type": "string",
+          "description": "The unique 16-character spectral fingerprint."
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the protection was applied."
+        },
+        "userId": {
+          "type": "string",
+          "description": "The UID of the user who owns this record."
+        }
+      },
+      "required": ["name", "fingerprint", "timestamp", "userId"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/tracks/{trackId}": {
+      "schema": "ProtectedTrack",
+      "description": "A collection of protected tracks for a specific user."
+    }
+  }
+}
